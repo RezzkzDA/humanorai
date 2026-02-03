@@ -22,4 +22,4 @@ app.post("/chat", async (req, res) => {
   res.json({ reply: data.candidates[0].content.parts[0].text });
 });
 
-export default app;
+export default app; // <-- penting di Vercel
