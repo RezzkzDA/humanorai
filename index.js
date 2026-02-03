@@ -7,19 +7,29 @@ app.use(express.json());
 app.post("/chat", async (req, res) => {
   const userMessage = req.body.prompt;
 
-  const response = await fetch("https://api.gemini.google.com/v1/chat", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.GEMINI_API_KEY}`
-    },
-    body: JSON.stringify({
-      contents: [{ role: "user", parts: [{ text: userMessage }]}]
-    })
-  });
+  try {
+    const response = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.GEMINI_API_KEY}`
+        },
+        body: JSON.stringify({
+          contents: [
+            { role: "user", parts: [{ text: userMessage }] }
+          ]
+        })
+      }
+    );
 
-  const data = await response.json();
-  res.json({ reply: data.candidates[0].content.parts[0].text });
+    const data = await response.json();
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "No reply from AI.";
+    res.json({ reply });
+  } catch (err) {
+    res.status(500).json({ reply: "Error connecting to Gemini API." });
+  }
 });
 
-export default app; // <-- penting di Vercel
+export default app;
