@@ -32,4 +32,4 @@ app.post("/chat", async (req, res) => {
   }
 });
 
-export default app;
+export default app; // penting, jangan pakai app.listen
